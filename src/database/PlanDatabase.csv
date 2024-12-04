@@ -1,0 +1,2 @@
+plan_id,meal_type,food_items,total_nutrition,total_calories
+1,lunch,"['chicken breast', 'rice', 'broccoli']","{'protein': 30, 'carbs': 50, 'fat': 15}",600

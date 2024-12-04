@@ -1,0 +1,2 @@
+plan_id,date,meal_type,total_calories,total_nutrition,eaten
+1,2024-12-04,breakfast,500,"{'protein': 20, 'carbs': 60, 'fat': 10}",False
