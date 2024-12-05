@@ -15,7 +15,8 @@ from pages.SettingsView import SettingsView
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        
+        self.title("CalorieMate - Homepage")
+        self.geometry("1280x720") #Window Size
         #Lanjutkan Code
         
         
