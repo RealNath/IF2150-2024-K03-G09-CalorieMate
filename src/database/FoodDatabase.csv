@@ -1,2 +1,0 @@
-food_id,name,calories,protein,carbs,fat,other_nutrients
-1,chicken breast,200,30,0,5,"{'vitaminB6': 0.5, 'iron': 1.2}"
