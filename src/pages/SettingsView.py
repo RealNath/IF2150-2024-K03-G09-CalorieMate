@@ -1,6 +1,8 @@
 #Import-import apalah itu dari sini
 import tkinter as tk
 
+Database = 'src/database/database.db' # Path to database
+
 #Code mulai dari sini
 class SettingsView(tk.Frame):
     def __init__(self, parent, controller):

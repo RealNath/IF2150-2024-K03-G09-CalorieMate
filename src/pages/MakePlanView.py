@@ -2,6 +2,8 @@ import tkinter as tk
 import sqlite3
 from logic.calorieCalculator import CalorieCalculator
 
+Database = 'src/database/database.db' # Path to database
+
 class MakePlanView(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -46,7 +48,7 @@ class MakePlanView(tk.Frame):
         total_calories = self.calculate_total_calories()
 
         # Save the plan to PlanDatabase
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect(Database)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO PlanDatabase (plan_name, meal_type, food_items, total_calories) VALUES (?, ?, ?, ?)",
                        (plan_name, meal_type, food_items, total_calories))

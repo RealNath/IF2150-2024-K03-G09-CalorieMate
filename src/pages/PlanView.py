@@ -2,6 +2,8 @@ import tkinter as tk
 import sqlite3
 from datetime import date
 
+Database = 'src/database/database.db' # Path to database
+
 class PlanView(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -37,7 +39,7 @@ class PlanView(tk.Frame):
 
     def add_plan(self):
         # This use placeholder plan information (to be replaced by user input)
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect(Database)
         cursor = conn.cursor()
 
         today = date.today().isoformat()
