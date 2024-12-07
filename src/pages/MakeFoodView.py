@@ -1,5 +1,8 @@
 import tkinter as tk
+import tkinter.messagebox as MessageBox
 import sqlite3
+
+Database = 'src/database/database.db' # Path to database
 
 class MakeFood(tk.Frame):
     def __init__(self, parent, controller):
@@ -8,6 +11,9 @@ class MakeFood(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
+        # Tambahkan tombol untuk kembali ke FoodView
+        back_button = tk.Button(self, text="Back to Food View", command=lambda: self.controller.show_page("FoodView"))
+        back_button.pack(pady=10)
         
         # Food Name
         tk.Label(self, text="Food Name:").pack()
@@ -90,7 +96,7 @@ class MakeFood(tk.Frame):
             return
 
         # Update the FoodDatabase
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect(Database)
         cursor = conn.cursor()
         cursor.execute('''
             INSERT INTO FoodDatabase (name, calories, protein, carbs, total_fat, cholesterol, saturated_fat, sodium, fiber, sugar)
@@ -100,3 +106,22 @@ class MakeFood(tk.Frame):
         conn.commit()
         conn.close()
         print(f"Added food item '{name}' to the FoodDatabase")
+
+        # Kosongkan semua entri
+        self.name_entry.delete(0, tk.END)
+        self.calories_entry.delete(0, tk.END)
+        self.protein_entry.delete(0, tk.END)
+        self.carbs_entry.delete(0, tk.END)
+        self.total_fat_entry.delete(0, tk.END)
+        self.cholesterol_entry.delete(0, tk.END)
+        self.saturated_fat_entry.delete(0, tk.END)
+        self.sodium_entry.delete(0, tk.END)
+        self.fiber_entry.delete(0, tk.END)
+        self.sugar_entry.delete(0, tk.END)
+
+        # Tampilkan pesan konfirmasi
+        MessageBox.showinfo("Success", f"Food item '{name}' has been added successfully!")
+
+        # Kembali ke halaman sebelumnya (FoodView)
+        self.controller.show_page("FoodView")
+
