@@ -1,8 +1,10 @@
 import tkinter as tk
 import tkinter.messagebox as MessageBox
+from logic.DatabaseManager import DatabaseManager
 import sqlite3
 
 Database = 'src/database/database.db' # Path to database
+db = DatabaseManager(Database)
 
 class MakeFood(tk.Frame):
     def __init__(self, parent, controller):
@@ -96,15 +98,9 @@ class MakeFood(tk.Frame):
             return
 
         # Update the FoodDatabase
-        conn = sqlite3.connect(Database)
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO FoodDatabase (name, calories, protein, carbs, total_fat, cholesterol, saturated_fat, sodium, fiber, sugar)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (name, calories, protein, carbs, total_fat, cholesterol, saturated_fat, sodium, fiber, sugar))
-
-        conn.commit()
-        conn.close()
+        db.connect()
+        db.create("FoodDatabase", {"name" : name, "calories" : calories, "protein" : protein, "carbs" : carbs, "total_fat" : total_fat, "cholesterol" : cholesterol, "saturated_fat" : saturated_fat, "sodium" : sodium, "fiber" : fiber, "sugar" : sugar})
+        db.disconnect()
         print(f"Added food item '{name}' to the FoodDatabase")
 
         # Kosongkan semua entri
