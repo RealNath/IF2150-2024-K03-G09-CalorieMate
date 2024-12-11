@@ -6,7 +6,30 @@ class CalorieCalculator:
         self.db_path = db_path
 
     def calculate_daily_nutrition(self, date):
-        # Existing method...
+        # Connect to the SQLite database
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        # Fetch all plans for the specified date from UserPlan
+        cursor.execute('''
+            SELECT plan_name, meal_type, total_calories, eaten
+            FROM UserPlan
+            WHERE date = ?
+        ''', (date,))
+        plans = cursor.fetchall()
+
+        # Initialize totals
+        total_calories = 0
+        total_nutrition = {
+            'protein': 0,
+            'carbs': 0,
+            'total_fat': 0,
+            'cholesterol': 0,
+            'saturated_fat': 0,
+            'sodium': 0,
+            'fiber': 0,
+            'sugar': 0
+        }
         pass
 
     def calculate_total_calories_for_foods(self, food_list):

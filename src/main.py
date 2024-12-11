@@ -148,12 +148,9 @@ class NavMain(ttk.Frame):
             btn_text = f"{item['icon']} {item['title']}"
             if 'badge' in item:
                 btn_text += f"  {item['badge']}"
-            
+
             # Assign specific commands based on title
-            if item['title'] == "Make Plan":
-                btn = ttk.Button(self, text=btn_text, style='NavMain.TButton',
-                                 command=lambda: controller.show_page("PlanView"))
-            elif item['title'] == "Home":
+            if item['title'] == "Home":
                 btn = ttk.Button(self, text=btn_text, style='NavMain.TButton',
                                  command=lambda: controller.show_page("PlanView"))
             elif item['title'] == "History":
@@ -171,7 +168,7 @@ class NavMain(ttk.Frame):
             else:
                 btn = ttk.Button(self, text=btn_text, style='NavMain.TButton',
                                  command=lambda url=item['url']: self.navigate(url))
-            
+
             btn.pack(fill="x", pady=5, padx=20)
 
             if item.get('isActive'):
@@ -210,14 +207,14 @@ class CalendarWidget(ttk.Frame):
         super().__init__(parent, *args, **kwargs)
 
         self.controller = controller
-        self.calendar = TkCalendar(self, selectmode='day')
+        self.calendar = TkCalendar(self, selectmode='day', date_pattern='yyyy-mm-dd')  # Set date pattern
         self.calendar.pack(pady=10, padx=10)
 
         # Bind date selection
         self.calendar.bind("<<CalendarSelected>>", self.on_date_selected)
 
     def on_date_selected(self, event):
-        selected_date = self.calendar.get_date()
+        selected_date = self.calendar.get_date()  # Now in 'YYYY-MM-DD' format
         print(f"Selected date: {selected_date}")
         self.controller.update_selected_date(selected_date)
 
@@ -311,7 +308,7 @@ class Dashboard(ttk.Frame):
 
         # Navigation Items
         self.nav_main_items = [
-            {"title": "Home", "icon": "🏠", "url": "#", "isActive": True},
+            {"title": "Home", "icon": "🏠", "url": "#"},
             {"title": "History", "icon": "📜", "url": "#"},
             {"title": "Article", "icon": "✨", "url": "#"},
             {"title": "Foods", "icon": "🍔", "url": "#"},
@@ -330,16 +327,10 @@ class Dashboard(ttk.Frame):
         self.main_content.show_page(page_name)
 
     def update_selected_date(self, selected_date):
-        # Broadcast the selected date to relevant pages
         print(f"Dashboard received selected date: {selected_date}")
         if hasattr(self.main_content.current_page, 'selected_date'):
             self.main_content.current_page.selected_date = selected_date
-            self.main_content.current_page.plan_name_entry.config(state='normal')
-            self.main_content.current_page.plan_name_entry.delete(0, tk.END)
-            self.main_content.current_page.meal_type_var.set("breakfast")
-            self.main_content.current_page.foods_listbox.delete(0, tk.END)
-            self.main_content.current_page.selected_foods = []
-            self.main_content.current_page.save_plan()  # Refresh the plan
+            self.main_content.current_page.load_plans()
 
     def enable_dark_mode(self):
         # Implement dark mode if desired

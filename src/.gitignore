@@ -10,3 +10,7 @@ venv/
 # Ignore temporary files from IDEs
 .idea/
 .vscode/
+
+
+#ignore other files
+get-pip.py

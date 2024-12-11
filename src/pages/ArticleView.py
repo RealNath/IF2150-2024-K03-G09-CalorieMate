@@ -3,26 +3,40 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext
 from logic.DatabaseManager import DatabaseManager
 from tkinter import messagebox
-from config import COLOR_BACKGROUND, COLOR_TEXT  # Updated import
+from config import COLOR_BACKGROUND, COLOR_TEXT
 
 Database = 'src/database/database.db'  # Path to database
 db = DatabaseManager(Database)
 
 class ArticleView(tk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent, bg=COLOR_BACKGROUND)  # Use COLOR_BACKGROUND from config
+        super().__init__(parent, bg=COLOR_BACKGROUND)
         self.controller = controller
         self.selected_article_id = None
         self.create_widgets()
 
     def create_widgets(self):
         # Title Label
-        title_label = ttk.Label(self, text="Articles", font=("Arial", 16, "bold"), background=COLOR_BACKGROUND, foreground=COLOR_TEXT)
+        title_label = ttk.Label(self, text="Articles", font=("Arial", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         title_label.pack(pady=10)
 
         # Frame for list and preview
         content_frame = ttk.Frame(self, style='MainContent.TFrame')
         content_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Listbox for articles
+        self.article_listbox = tk.Listbox(content_frame, width=30)
+        self.article_listbox.pack(side="left", fill="y")
+        self.article_listbox.bind('<<ListboxSelect>>', self.on_article_select)
+
+        # Scrollbar for listbox
+        scrollbar = ttk.Scrollbar(content_frame, orient="vertical", command=self.article_listbox.yview)
+        scrollbar.pack(side="left", fill="y")
+        self.article_listbox.config(yscrollcommand=scrollbar.set)
+
+        # Preview Area
+        self.preview_area = scrolledtext.ScrolledText(content_frame, wrap=tk.WORD, width=60, bg=COLOR_BACKGROUND, fg=COLOR_TEXT, state=tk.DISABLED)
+        self.preview_area.pack(side="left", fill="both", expand=True, padx=10)
 
         # Load Articles
         self.load_articles()
