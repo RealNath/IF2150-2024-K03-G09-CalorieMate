@@ -1,12 +1,56 @@
-#Import-import apalah itu dari sini
+# src/pages/ProfileView.py
 import tkinter as tk
+from tkinter import ttk, messagebox
+from logic.DatabaseManager import DatabaseManager
 
-Database = 'src/database/database.db' # Path to database
+Database = 'src/database/database.db'  # Path to database
+db = DatabaseManager(Database)
 
-#Code mulai dari sini
 class ProfileView(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
-        self.controller = controller  # Store the controller (MainApp)
-        
-        #Lanjutkan code
+        self.controller = controller
+        self.user_id = 1  # Assuming single user with ID 1
+        self.create_widgets()
+        self.load_user_profile()
+
+    def create_widgets(self):
+        # Title Label
+        title_label = ttk.Label(self, text="Profile", font=("Arial", 16, "bold"))
+        title_label.pack(pady=10)
+
+        # Frame for profile fields
+        profile_frame = ttk.Frame(self)
+        profile_frame.pack(pady=10, padx=20, fill="x")
+
+        # Name
+        name_label = ttk.Label(profile_frame, text="Name:", font=("Arial", 12))
+        name_label.grid(row=0, column=0, sticky="w", pady=5)
+        self.name_entry = ttk.Entry(profile_frame, width=30)
+        self.name_entry.grid(row=0, column=1, pady=5, padx=10)
+
+        # Save Button
+        save_button = ttk.Button(self, text="Save Changes", command=self.save_profile)
+        save_button.pack(pady=20)
+
+    def load_user_profile(self):
+        db.connect()
+        user = db.read("UserPreference", ["name"], {"user_id": self.user_id}, True)
+        db.disconnect()
+
+        if user:
+            self.name_entry.insert(0, user[0])
+        else:
+            messagebox.showerror("Error", "Failed to load user profile.")
+
+    def save_profile(self):
+        new_name = self.name_entry.get().strip()
+        if not new_name:
+            messagebox.showwarning("Input Error", "Name cannot be empty.")
+            return
+
+        db.connect()
+        db.update("UserPreference", {"name": new_name}, {"user_id": self.user_id})
+        db.disconnect()
+
+        messagebox.showinfo("Success", "Profile updated successfully.")

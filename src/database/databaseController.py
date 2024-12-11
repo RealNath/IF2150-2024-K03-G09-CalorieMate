@@ -1,90 +1,51 @@
+# src/database/databaseController.py
 import sqlite3
 
-conn = sqlite3.connect('src/database/database.db')
-cursor = conn.cursor()
+class DatabaseController:
+    def __init__(self, db_path='src/database/database.db'):
+        self.db_path = db_path
+        self.conn = None
+        self.cursor = None
 
-# UserPreference table
-cursor.execute('''
-    CREATE TABLE UserPreference (
-        user_id INTEGER PRIMARY KEY,
-        name TEXT,
-        calorie_budget INTEGER,
-        weight_goal TEXT,
-        notification_enabled BOOLEAN,
-        DarkMode BOOLEAN
-    )
-''')
-cursor.execute('''
-    INSERT INTO UserPreference (user_id, name, calorie_budget, weight_goal, notification_enabled, DarkMode)
-    VALUES (1, 'User', 2000, 'maintain', 1, 1)
-''')
+    def connect(self):
+        self.conn = sqlite3.connect(self.db_path)
+        self.cursor = self.conn.cursor()
 
-# ArticleDatabase table
-cursor.execute('''
-    CREATE TABLE ArticleDatabase (
-        article_id INTEGER PRIMARY KEY,
-        article_name TEXT,
-        article_author TEXT,
-        text TEXT
-    )
-''')
-cursor.execute('''
-    INSERT INTO ArticleDatabase (article_id, article_name, article_author, text)
-    VALUES (1, 'Healthy Eating', 'Dr Bendover', 'Healthy eating is about maintaining a balanced diet. It involves consuming a variety of foods to get essential nutrients, including proteins, carbs, fats, vitamins, and minerals. It''s important to find a good balance between energy intake and physical activity for maintaining a healthy lifestyle.')
-''')
+    def close(self):
+        if self.conn:
+            self.conn.commit()
+            self.conn.close()
+            self.conn = None
+            self.cursor = None
 
-# FoodDatabase table
-cursor.execute('''
-    CREATE TABLE FoodDatabase (
-        food_id INTEGER PRIMARY KEY,
-        name TEXT,
-        calories INTEGER,
-        protein REAL,
-        carbs REAL,
-        total_fat REAL,
-        cholesterol REAL,
-        saturated_fat REAL,
-        sodium REAL,
-        fiber REAL,
-        sugar REAL,
-        other_nutrients TEXT
-    )
-''')
-cursor.execute('''
-    INSERT INTO FoodDatabase (food_id, name, calories, protein, carbs, total_fat, cholesterol, saturated_fat, sodium, fiber, sugar, other_nutrients)
-    VALUES (1, 'chicken breast', 200, 30, 0, 5, 0, 1, 0.16, 3, 4, '{"vitaminB6": 0.5, "iron": 1.2}')
-''')
+    def read(self, table, columns=["*"], conditions=None, single=False):
+        # columns: list of columns, conditions: dict of {col: val}, single: return one or all
+        col_str = ", ".join(columns)
+        sql = f"SELECT {col_str} FROM {table}"
+        params = []
+        if conditions:
+            where_clause = " AND ".join([f"{k}=?" for k in conditions.keys()])
+            sql += f" WHERE {where_clause}"
+            params = list(conditions.values())
+        self.cursor.execute(sql, params)
+        return self.cursor.fetchone() if single else self.cursor.fetchall()
 
-# UserPlan table
-cursor.execute('''
-    CREATE TABLE UserPlan (
-        plan_id INTEGER PRIMARY KEY,
-        plan_name TEXT,
-        date TEXT,
-        meal_type TEXT,
-        total_calories INTEGER,
-        eaten BOOLEAN
-    )
-''')
-cursor.execute('''
-    INSERT INTO UserPlan (plan_id, plan_name, date, meal_type, total_calories, eaten)
-    VALUES (1, 'generic_breakfast', '2024-12-04', 'breakfast', 500, 0)
-''')
+    def create(self, table, data):
+        # data: dict of {col: val}
+        cols = ", ".join(data.keys())
+        placeholders = ", ".join(["?" for _ in data.keys()])
+        sql = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+        self.cursor.execute(sql, list(data.values()))
 
-# PlanDatabase table
-cursor.execute('''
-    CREATE TABLE PlanDatabase (
-        plan_id INTEGER PRIMARY KEY,
-        plan_name TEXT,
-        meal_type TEXT,
-        food_items TEXT,
-        total_calories INTEGER
-    )
-''')
-cursor.execute('''
-    INSERT INTO PlanDatabase (plan_id, plan_name, meal_type, food_items, total_calories)
-    VALUES (1, 'generic_lunch', 'lunch', '["chicken breast", "rice", "broccoli"]', 600)
-''')
+    def update(self, table, data, conditions):
+        # data: dict of cols to update, conditions: dict for WHERE
+        set_clause = ", ".join([f"{k}=?" for k in data.keys()])
+        where_clause = " AND ".join([f"{k}=?" for k in conditions.keys()])
+        sql = f"UPDATE {table} SET {set_clause} WHERE {where_clause}"
+        params = list(data.values()) + list(conditions.values())
+        self.cursor.execute(sql, params)
 
-conn.commit()
-conn.close()
+    def delete(self, table, conditions):
+        where_clause = " AND ".join([f"{k}=?" for k in conditions.keys()])
+        sql = f"DELETE FROM {table} WHERE {where_clause}"
+        self.cursor.execute(sql, list(conditions.values()))

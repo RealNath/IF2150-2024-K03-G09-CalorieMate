@@ -1,8 +1,8 @@
+# src/pages/PlanView.py
 import tkinter as tk
+from tkinter import ttk, messagebox
 from logic.DatabaseManager import DatabaseManager
 from datetime import date
-from tkinter import messagebox
-from tkinter import ttk  # Import ttk for Combobox
 
 Database = 'src/database/database.db'  # Path to database
 db = DatabaseManager(Database)
@@ -11,123 +11,200 @@ class PlanView(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.dropdown = None  # Variable to store the dropdown reference
-        self.confirm_button = None  # Variable to store the confirm button reference
-        self.plan_selection_label = None  # Variable to store the plan selection label reference
+        self.selected_date = date.today().isoformat()
+        self.selected_foods = []  # List to store selected foods
+        self.calorie_calculator = controller.calorie_calculator  # Access calorie calculator from controller
         self.create_widgets()
 
     def create_widgets(self):
-        today = date.today().isoformat()
+        # Title Label
+        title_label = ttk.Label(self, text="Your Plan", font=("Arial", 16, "bold"))
+        title_label.pack(pady=10)
 
-        # Clear previous content
-        for widget in self.winfo_children():
-            widget.destroy()
+        # Frame for plan details
+        plan_frame = ttk.Frame(self)
+        plan_frame.pack(pady=10, padx=20, fill="x")
 
+        # Plan Name
+        plan_name_label = ttk.Label(plan_frame, text="Plan Name:", font=("Arial", 12))
+        plan_name_label.grid(row=0, column=0, sticky="w", pady=5)
+        self.plan_name_entry = ttk.Entry(plan_frame, width=30)
+        self.plan_name_entry.grid(row=0, column=1, pady=5, padx=10)
+
+        # Meal Type
+        meal_type_label = ttk.Label(plan_frame, text="Meal Type:", font=("Arial", 12))
+        meal_type_label.grid(row=1, column=0, sticky="w", pady=5)
+        self.meal_type_var = tk.StringVar()
+        self.meal_type_combobox = ttk.Combobox(plan_frame, textvariable=self.meal_type_var, state="readonly")
+        self.meal_type_combobox['values'] = ["breakfast", "brunch", "lunch", "dinner", "snack", "dessert", "appetizer", "supper"]
+        self.meal_type_combobox.current(0)
+        self.meal_type_combobox.grid(row=1, column=1, pady=5, padx=10)
+
+        # Selected Date (From Calendar)
+        date_label = ttk.Label(plan_frame, text="Date:", font=("Arial", 12))
+        date_label.grid(row=2, column=0, sticky="w", pady=5)
+        self.date_entry = ttk.Entry(plan_frame, width=30)
+        self.date_entry.grid(row=2, column=1, pady=5, padx=10)
+        self.date_entry.insert(0, self.selected_date)
+        self.date_entry.config(state='readonly')  # Read-only as date is selected from calendar
+
+        # Listbox for selected foods
+        foods_label = ttk.Label(self, text="Selected Foods:", font=("Arial", 12))
+        foods_label.pack(pady=(20, 5))
+        self.foods_listbox = tk.Listbox(self, width=50, height=10)
+        self.foods_listbox.pack(pady=5)
+
+        # Buttons Frame
+        buttons_frame = ttk.Frame(self)
+        buttons_frame.pack(pady=10)
+
+        add_food_button = ttk.Button(buttons_frame, text="Add Food", command=self.add_food)
+        add_food_button.grid(row=0, column=0, padx=5)
+
+        remove_food_button = ttk.Button(buttons_frame, text="Remove Selected Food", command=self.remove_selected_food)
+        remove_food_button.grid(row=0, column=1, padx=5)
+
+        # Save Plan Button
+        save_plan_button = ttk.Button(self, text="Save Plan", command=self.save_plan)
+        save_plan_button.pack(pady=20)
+
+        # Load existing plan for selected date
+        self.load_plan()
+
+    def load_plan(self):
+        # Fetch plans for the selected date
         db.connect()
-        
-        plans = db.read("UserPlan", ["plan_name, meal_type"], {"date" : today}, False)
+        plans = db.read("UserPlan", ["plan_name, meal_type, total_calories"], {"date": self.selected_date}, False)
+        db.disconnect()
 
         if plans:
             for plan in plans:
-                plan_label = tk.Label(self, text=f"Plan: {plan[0]}, Meal Type: {plan[1]}")
-                plan_label.pack()
-
-                # Add a delete button for each plan
-                delete_button = tk.Button(self, text="Delete", command=lambda plan_name=plan[0]: self.delete_plan(plan_name))
-                delete_button.pack(pady=5)
+                plan_name, meal_type, total_calories = plan
+                self.plan_name_entry.insert(0, plan_name)
+                self.meal_type_var.set(meal_type)
+                # Load foods into listbox
+                self.load_foods_from_plan(plan_name)
         else:
-            no_plan_label = tk.Label(self, text="No plans for today.")
-            no_plan_label.pack()
+            # No plan for the selected date
+            pass
 
-            # 'Make a Plan' Button
-            make_plan_button = tk.Button(self, text="Make a Plan", command=lambda: self.controller.show_page("MakePlanView"))
-            make_plan_button.pack(pady=10)
-
-        # 'Add a Plan' Button
-        add_plan_button = tk.Button(self, text="Add a Plan", command=self.add_plan)
-        add_plan_button.pack(pady=10)
-
+    def load_foods_from_plan(self, plan_name):
+        db.connect()
+        plan = db.read("PlanDatabase", ["food_items"], {"plan_name": plan_name}, True)
         db.disconnect()
 
-    def add_plan(self):
-        # Fetch all available plans from PlanDatabase
-        db.connect()
+        if plan:
+            food_items = eval(plan[0])  # Convert string to list
+            self.selected_foods = food_items
+            self.update_foods_listbox()
+        else:
+            messagebox.showerror("Error", "Failed to load foods from the plan.")
 
-        available_plans = db.read("PlanDatabase", ["plan_name"], None, False)
+    def add_food(self):
+        # Open a new window to select food from FoodDatabase
+        AddFoodPopup(self)
 
-        if not available_plans:
-            messagebox.showwarning("No Plans Available", "There are no available plans in the PlanDatabase.")
-            db.disconnect()
+    def remove_selected_food(self):
+        selected_indices = self.foods_listbox.curselection()
+        if not selected_indices:
+            messagebox.showwarning("Selection Error", "No food item selected to remove.")
+            return
+        for index in reversed(selected_indices):
+            food = self.foods_listbox.get(index)
+            self.selected_foods.remove(food)
+            self.foods_listbox.delete(index)
+
+    def update_foods_listbox(self):
+        self.foods_listbox.delete(0, tk.END)
+        for food in self.selected_foods:
+            self.foods_listbox.insert(tk.END, food)
+
+    def save_plan(self):
+        plan_name = self.plan_name_entry.get().strip()
+        meal_type = self.meal_type_var.get()
+        date_selected = self.date_entry.get()
+
+        if not plan_name:
+            messagebox.showwarning("Input Error", "Plan name cannot be empty.")
             return
 
-        # Extract the plan names from the fetched data
-        plan_names = [plan[0] for plan in available_plans]
-
-        # Check if the plan selection label already exists, if so, don't create another
-        if self.plan_selection_label:
-            self.plan_selection_label.destroy()  # Remove the old label if it exists
-
-        # Create a new label for selecting a plan
-        self.plan_selection_label = tk.Label(self, text="Select a plan:")
-        self.plan_selection_label.pack(pady=5)
-
-        # Check if the dropdown already exists, if so, don't create another
-        if self.dropdown:
-            self.dropdown.destroy()  # Remove the old dropdown if it exists
-
-        # Create a new dropdown (Combobox) to select the plan
-        self.dropdown = ttk.Combobox(self, values=plan_names)
-        self.dropdown.set(plan_names[0])  # Set the default value to the first plan
-        self.dropdown.pack(pady=5)
-
-        # Check if the confirm button already exists, if so, don't create another
-        if self.confirm_button:
-            self.confirm_button.destroy()  # Remove the old confirm button if it exists
-
-        # Button to confirm selection and add the plan
-        self.confirm_button = tk.Button(self, text="Add", command=lambda: self.confirm_add_plan())
-        self.confirm_button.pack(pady=10)
-
-    def confirm_add_plan(self):
-        selected_plan_name = self.dropdown.get()
-
-        # Validate if a plan was selected
-        if not selected_plan_name:
-            messagebox.showwarning("Invalid Selection", "Please select a plan.")
+        if not self.selected_foods:
+            messagebox.showwarning("Input Error", "Please add at least one food item to the plan.")
             return
 
-        # Fetch details for the selected plan from PlanDatabase
+        # Calculate total calories
+        total_calories = self.calorie_calculator.calculate_total_calories_for_foods(self.selected_foods)
+
+        # Save to PlanDatabase
         db.connect()
-        selected_plan = db.read("PlanDatabase", ["meal_type, food_items, total_calories"], {"plan_name" : selected_plan_name}, True)
-
-        # Insert the selected plan into UserPlan
-        today = date.today().isoformat()
-        meal_type = selected_plan[0]
-        total_calories = selected_plan[2]
-        eaten = False  # Placeholder value
-
-        db.create("UserPlan", {"plan_name": selected_plan_name, "date": today, "meal_type": meal_type, "total_calories": total_calories, "eaten": eaten})
-
-        # Show confirmation
-        messagebox.showinfo("Plan Added", f"The plan '{selected_plan_name}' has been added to your plan for today.")
+        db.create("PlanDatabase", {
+            "plan_name": plan_name,
+            "meal_type": meal_type,
+            "food_items": str(self.selected_foods),
+            "total_calories": total_calories
+        })
         db.disconnect()
 
-        # Refresh PlanView page with updated content
+        # Save to UserPlan
+        db.connect()
+        db.create("UserPlan", {
+            "plan_name": plan_name,
+            "date": date_selected,
+            "meal_type": meal_type,
+            "total_calories": total_calories,
+            "eaten": False
+        })
+        db.disconnect()
+
+        messagebox.showinfo("Success", "Plan saved successfully.")
         self.controller.show_page("PlanView")
 
-    def delete_plan(self, plan_name):
-        # Confirm the deletion
-        confirm = messagebox.askyesno("Confirm Deletion", f"Are you sure you want to delete the plan '{plan_name}'?")
-        if confirm:
-            # Delete the selected plan from the database
-            db.connect()
+class AddFoodPopup(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Add Food")
+        self.geometry("300x400")
+        self.parent = parent
+        self.selected_food = None
+        self.create_widgets()
 
-            db.delete("UserPlan", {"plan_name" : plan_name})
-            
-            db.disconnect()
+    def create_widgets(self):
+        # Label
+        label = ttk.Label(self, text="Select Food to Add", font=("Arial", 14, "bold"))
+        label.pack(pady=10)
 
-            # Show confirmation message
-            messagebox.showinfo("Plan Deleted", f"The plan '{plan_name}' has been deleted.")
+        # Listbox for foods
+        self.food_listbox = tk.Listbox(self, width=40, height=15)
+        self.food_listbox.pack(pady=10, padx=10, fill="both", expand=True)
 
-            # Refresh the PlanView to reflect the change
-            self.create_widgets()  # Refresh content on the page
+        # Scrollbar for listbox
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.food_listbox.yview)
+        scrollbar.pack(side="right", fill="y")
+        self.food_listbox.config(yscrollcommand=scrollbar.set)
+
+        # Load foods
+        self.load_foods()
+
+        # Add Button
+        add_button = ttk.Button(self, text="Add Selected Food", command=self.add_selected_food)
+        add_button.pack(pady=10)
+
+    def load_foods(self):
+        db.connect()
+        foods = db.read("FoodDatabase", ["name"], None, False)
+        db.disconnect()
+
+        self.food_list = [food[0] for food in foods]
+        for food in self.food_list:
+            self.food_listbox.insert(tk.END, food)
+
+    def add_selected_food(self):
+        selection = self.food_listbox.curselection()
+        if selection:
+            index = selection[0]
+            food_name = self.food_list[index]
+            self.parent.selected_foods.append(food_name)
+            self.parent.update_foods_listbox()
+            self.destroy()
+        else:
+            messagebox.showwarning("Selection Error", "No food item selected.")
