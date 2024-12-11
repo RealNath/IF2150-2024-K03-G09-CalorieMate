@@ -1,16 +1,24 @@
+# main.py
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar as TkCalendar
 import math
+import random  # Imported here to ensure it's available for speedometer updates
+import importlib
+
+#640D5F
+#D91656
+#EB5B00
+#FFB200
 
 # ---------------------------
 # Color Scheme Definitions
 # ---------------------------
-COLOR_PRIMARY = "#355F2E"      # Dark Green
-COLOR_SECONDARY = "#A8CD89"    # Greenish
-COLOR_ACCENT = "#F9C0AB"       # Light Orange/Pink
-COLOR_BACKGROUND = "#F4E0AF"   # Light Yellowish
-COLOR_TEXT = "#FFFFFF"         # White for text on dark backgrounds
+COLOR_PRIMARY = "#640D5F"
+COLOR_SECONDARY = "#D91656"
+COLOR_ACCENT = "#EB5B00"
+COLOR_BACKGROUND = "#FFB200"
+COLOR_TEXT = "#FFFFFF"
 
 # ---------------------------
 # Sample Data Definitions
@@ -113,6 +121,50 @@ def configure_styles():
     style.configure('HorizontalSeparator.TSeparator', orient='horizontal')
 
 # ---------------------------
+# Make Plan Pop-up Widget
+# ---------------------------
+class MakePlanPopup(tk.Toplevel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.title("Make a Plan")
+        self.geometry("400x300")  # Width x Height
+        self.configure(bg=COLOR_BACKGROUND)
+        
+        # Make the pop-up modal
+        self.transient(parent)
+        self.grab_set()
+        
+        # Example Widgets in Pop-up
+        label = ttk.Label(self, text="Create a New Plan", font=("Arial", 16, "bold"), background=COLOR_BACKGROUND)
+        label.pack(pady=20)
+
+        # Plan Title Entry
+        title_label = ttk.Label(self, text="Plan Title:", background=COLOR_BACKGROUND, font=("Arial", 12))
+        title_label.pack(pady=(10, 5), padx=20, anchor='w')
+        self.title_entry = ttk.Entry(self)
+        self.title_entry.pack(pady=(0, 10), padx=20, fill='x')
+
+        # Plan Description Text
+        desc_label = ttk.Label(self, text="Description:", background=COLOR_BACKGROUND, font=("Arial", 12))
+        desc_label.pack(pady=(10, 5), padx=20, anchor='w')
+        self.desc_text = tk.Text(self, height=5, wrap='word')
+        self.desc_text.pack(pady=(0, 10), padx=20, fill='both', expand=True)
+
+        # Save Button
+        save_button = ttk.Button(self, text="Save Plan", command=self.save_plan)
+        save_button.pack(pady=10)
+
+    def save_plan(self):
+        title = self.title_entry.get().strip()
+        description = self.desc_text.get("1.0", tk.END).strip()
+        
+        if title:
+            print(f"Plan Saved!\nTitle: {title}\nDescription: {description}")
+            self.destroy()
+        else:
+            print("Please enter a plan title.")
+
+# ---------------------------
 # Navigation Main Component
 # ---------------------------
 class NavMain(ttk.Frame):
@@ -124,8 +176,15 @@ class NavMain(ttk.Frame):
             btn_text = f"{item['icon']} {item['title']}"
             if 'badge' in item:
                 btn_text += f"  {item['badge']}"
-            btn = ttk.Button(self, text=btn_text, style='NavMain.TButton',
-                             command=lambda url=item['url']: self.navigate(url))
+            
+            # Assign specific command for "Make Plan" button
+            if item['title'] == "Make Plan":
+                btn = ttk.Button(self, text=btn_text, style='NavMain.TButton',
+                                 command=self.open_make_plan_popup)
+            else:
+                btn = ttk.Button(self, text=btn_text, style='NavMain.TButton',
+                                 command=lambda url=item['url']: self.navigate(url))
+            
             btn.pack(fill="x", pady=5, padx=20)
 
             if item.get('isActive'):
@@ -133,6 +192,9 @@ class NavMain(ttk.Frame):
 
     def navigate(self, url):
         print(f"Navigating to {url}")
+
+    def open_make_plan_popup(self):
+        popup = MakePlanPopup(self)
 
 # ---------------------------
 # User Info Component
@@ -145,7 +207,7 @@ class UserInfo(ttk.Frame):
         # Example User Data
         user = {
             "name": "Thor Odinson",
-            "avatar": None,  # Path to avatar image if available
+            "avatar": None,
         }
 
         # Avatar (Using Emoji as Placeholder)
