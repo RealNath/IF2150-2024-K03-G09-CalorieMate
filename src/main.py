@@ -6,6 +6,7 @@ import math
 import importlib
 import json
 import datetime
+from datetime import date
 
 # Importing Pages
 from pages.PlanView import PlanView
@@ -161,6 +162,8 @@ class CalendarWidget(ttk.Frame):
 
     def on_date_selected(self, event):
         selected_date = self.calendar.get_date()
+        # Store the selected date in the controller so all pages can access it
+        self.controller.selected_date = selected_date
         self.controller.update_selected_date(selected_date)
 
 
@@ -221,6 +224,7 @@ class Dashboard(ttk.Frame):
         self.controller = self  # Dashboard acts as its own controller
         self.db_manager = db
         self.calorie_calculator = CalorieCalculator(db_manager=db)
+        self.selected_date = date.today().isoformat()  # Store a default selected date
 
         # Navigation Items
         self.nav_main_items = [
@@ -241,6 +245,7 @@ class Dashboard(ttk.Frame):
         self.main_content.show_page(page_name)
 
     def update_selected_date(self, selected_date):
+        self.selected_date = selected_date
         if hasattr(self.main_content.current_page, 'selected_date'):
             self.main_content.current_page.selected_date = selected_date
             if hasattr(self.main_content.current_page, 'load_plans'):

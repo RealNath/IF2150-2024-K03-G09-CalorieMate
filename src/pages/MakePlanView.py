@@ -4,7 +4,6 @@ from tkinter import ttk, messagebox
 from config import COLOR_BACKGROUND, COLOR_TEXT
 from datetime import datetime
 import json
-from pages.PlanView import PlanView
 
 class MakePlanView(tk.Frame):
     def __init__(self, parent, controller):
@@ -115,7 +114,8 @@ class MakePlanView(tk.Frame):
         messagebox.showinfo("Success", f"Plan '{plan_name}' has been added to {selected_date}.")
         self.date_entry.delete(0, tk.END)
 
-        if isinstance(self.controller.main_content.current_page, PlanView):
+        # Refresh PlanView if currently visible
+        if hasattr(self.controller.main_content, "current_page") and hasattr(self.controller.main_content.current_page, "load_plans"):
             self.controller.main_content.current_page.load_plans()
 
     def validate_date_format(self, date_str):
@@ -267,14 +267,16 @@ class MakePlanView(tk.Frame):
 
         plan_id = new_plan[0]
 
-        if isinstance(self.controller.main_content.current_page, PlanView):
-            selected_date = self.controller.main_content.current_page.selected_date
-        else:
-            messagebox.showerror("Error", "No PlanView available to determine the selected date.")
+        # Now we get the selected date from the controller directly
+        selected_date = self.controller.selected_date
+        if not selected_date:
+            messagebox.showerror("Error", "No selected date is available.")
             return
 
         self.controller.db_manager.connect()
-        existing_user_plan = self.controller.db_manager.read("UserPlan", ["plan_id"], {"plan_id": plan_id, "date": selected_date}, True)
+        existing_user_plan = self.controller.db_manager.read(
+            "UserPlan", ["plan_id"], {"plan_id": plan_id, "date": selected_date}, True
+        )
         self.controller.db_manager.disconnect()
         if existing_user_plan:
             messagebox.showwarning("Plan Already Exists", f"The plan '{plan_name}' is already added for {selected_date}.")
@@ -296,9 +298,9 @@ class MakePlanView(tk.Frame):
         self.new_plan_name_entry.delete(0, tk.END)
         self.new_meal_type_combobox.current(0)
         for food in self.food_quantities:
-            self.food_quantities[food] = 0
-            self.food_widgets[food].config(text="0")
+            self.food_quantities[food] = 1
+            self.food_widgets[food].config(text="1")
         self.update_total_calories()
 
-        if isinstance(self.controller.main_content.current_page, PlanView):
+        if hasattr(self.controller.main_content, "current_page") and hasattr(self.controller.main_content.current_page, "load_plans"):
             self.controller.main_content.current_page.load_plans()
