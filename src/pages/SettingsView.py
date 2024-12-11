@@ -2,40 +2,34 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from logic.DatabaseManager import DatabaseManager
+from config import COLOR_BACKGROUND, COLOR_TEXT
 
-Database = 'src/database/database.db'  # Path to database
+Database = 'src/database/database.db'
 db = DatabaseManager(Database)
 
 class SettingsView(tk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent)
+        super().__init__(parent, bg=COLOR_BACKGROUND)
         self.controller = controller
-        self.user_id = 1  # Assuming single user with ID 1
+        self.user_id = 1
         self.create_widgets()
         self.load_settings()
 
     def create_widgets(self):
-        # Title Label
-        title_label = ttk.Label(self, text="Settings", font=("Arial", 16, "bold"))
+        title_label = ttk.Label(self, text="Settings", font=("Arial", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         title_label.pack(pady=10)
 
-        # Frame for settings
-        settings_frame = ttk.Frame(self)
+        settings_frame = ttk.Frame(self, style='MainContent.TFrame')
         settings_frame.pack(pady=10, padx=20, fill="x")
 
-        # Notification Toggle
         self.notification_var = tk.IntVar()
-        notification_check = ttk.Checkbutton(settings_frame, text="Enable Notifications",
-                                            variable=self.notification_var)
+        notification_check = ttk.Checkbutton(settings_frame, text="Enable Notifications", variable=self.notification_var)
         notification_check.grid(row=0, column=0, sticky="w", pady=5)
 
-        # Dark Mode Toggle (Optional)
         self.dark_mode_var = tk.IntVar()
-        dark_mode_check = ttk.Checkbutton(settings_frame, text="Enable Dark Mode",
-                                         variable=self.dark_mode_var)
+        dark_mode_check = ttk.Checkbutton(settings_frame, text="Enable Dark Mode", variable=self.dark_mode_var)
         dark_mode_check.grid(row=1, column=0, sticky="w", pady=5)
 
-        # Save Button
         save_button = ttk.Button(self, text="Save Settings", command=self.save_settings)
         save_button.pack(pady=20)
 
@@ -60,7 +54,6 @@ class SettingsView(tk.Frame):
 
         messagebox.showinfo("Success", "Settings updated successfully.")
 
-        # Optional: Apply dark mode changes immediately
         if dark_mode:
             self.controller.enable_dark_mode()
         else:

@@ -2,17 +2,16 @@
 import tkinter as tk
 import sqlite3
 from datetime import date
-from config import COLOR_BACKGROUND, COLOR_TEXT  # Updated import
+from config import COLOR_BACKGROUND, COLOR_TEXT
 from tkinter import messagebox
 
 class HistoryView(tk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent, bg=COLOR_BACKGROUND)  # Use COLOR_BACKGROUND from config
-        self.controller = controller 
+        super().__init__(parent, bg=COLOR_BACKGROUND)
+        self.controller = controller
         self.create_widgets()
 
     def create_widgets(self):
-
         title_label = tk.Label(self, text="Histori Konsumsi", font=("Arial", 18), bg=COLOR_BACKGROUND, fg=COLOR_TEXT)
         title_label.pack(pady=10)
 
@@ -21,7 +20,6 @@ class HistoryView(tk.Frame):
 
         self.display_history(history_frame)
 
-        # Clear History Button
         clear_button = tk.Button(self, text="Hapus History", command=self.clear_history)
         clear_button.pack(pady=20)
 
@@ -29,7 +27,6 @@ class HistoryView(tk.Frame):
         conn = sqlite3.connect('src/database/database.db')
         cursor = conn.cursor()
 
-        # Get history of all eaten plans sorted by date (descending)
         cursor.execute('''
             SELECT date, plan_name, total_calories
             FROM UserPlan
@@ -38,7 +35,6 @@ class HistoryView(tk.Frame):
         ''')
         eaten_plans = cursor.fetchall()
 
-        # Display each eaten plan in the Table
         for plan in eaten_plans:
             date_str, plan_name, total_calories = plan
             entry_text = f"{date_str} | {plan_name} | {total_calories} kcal"
@@ -51,7 +47,6 @@ class HistoryView(tk.Frame):
         conn = sqlite3.connect('src/database/database.db')
         cursor = conn.cursor()
 
-        # Delete 'eaten'
         cursor.execute('''
             DELETE FROM UserPlan
             WHERE eaten = 1
@@ -60,7 +55,6 @@ class HistoryView(tk.Frame):
         conn.commit()
         conn.close()
 
-        # Clear the history
         for widget in self.winfo_children():
             widget.destroy()
         self.create_widgets()
