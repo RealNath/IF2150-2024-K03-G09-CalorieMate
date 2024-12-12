@@ -30,26 +30,41 @@ class SettingsView(tk.Frame):
         dark_mode_check = ttk.Checkbutton(settings_frame, text="Enable Dark Mode", variable=self.dark_mode_var)
         dark_mode_check.grid(row=1, column=0, sticky="w", pady=5)
 
+        # Calorie budget
+        ttk.Label(settings_frame, text="Calorie Budget:", background=COLOR_BACKGROUND, foreground=COLOR_TEXT).grid(row=2, column=0, sticky="w", pady=5)
+        self.calorie_budget_entry = ttk.Entry(settings_frame, width=10)
+        self.calorie_budget_entry.grid(row=2, column=1, pady=5, padx=10)
+
+        change_profile_button = ttk.Button(self, text="Change Profile", command=self.go_to_profile)
+        change_profile_button.pack(pady=10)
+        
         save_button = ttk.Button(self, text="Save Settings", command=self.save_settings)
         save_button.pack(pady=20)
 
     def load_settings(self):
         db.connect()
-        settings = db.read("UserPreference", ["notification_enabled", "DarkMode"], {"user_id": self.user_id}, True)
+        settings = db.read("UserPreference", ["notification_enabled", "DarkMode", "calorie_budget"], {"user_id": self.user_id}, True)
         db.disconnect()
 
         if settings:
             self.notification_var.set(settings[0])
             self.dark_mode_var.set(settings[1])
+            self.calorie_budget_entry.delete(0, tk.END)
+            self.calorie_budget_entry.insert(0, str(settings[2]))
         else:
             messagebox.showerror("Error", "Failed to load settings.")
 
     def save_settings(self):
         notification = self.notification_var.get()
         dark_mode = self.dark_mode_var.get()
+        try:
+            calorie_budget = int(self.calorie_budget_entry.get())
+        except ValueError:
+            messagebox.showerror("Input Error", "Calorie Budget must be a number.")
+            return
 
         db.connect()
-        db.update("UserPreference", {"notification_enabled": notification, "DarkMode": dark_mode}, {"user_id": self.user_id})
+        db.update("UserPreference", {"notification_enabled": notification, "DarkMode": dark_mode, "calorie_budget": calorie_budget}, {"user_id": self.user_id})
         db.disconnect()
 
         messagebox.showinfo("Success", "Settings updated successfully.")
@@ -58,3 +73,6 @@ class SettingsView(tk.Frame):
             self.controller.enable_dark_mode()
         else:
             self.controller.disable_dark_mode()
+
+    def go_to_profile(self):
+        self.controller.show_page("ProfileView")

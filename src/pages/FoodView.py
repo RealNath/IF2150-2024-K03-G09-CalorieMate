@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from logic.DatabaseManager import DatabaseManager
+from pages.editFood import EditFoodView
 
 Database = 'src/database/database.db'
 db = DatabaseManager(Database)
@@ -38,6 +39,9 @@ class FoodView(tk.Frame):
 
             delete_button = tk.Button(self.food_list_frame, text="Delete", command=lambda fid=food_id: self.delete_food(fid))
             delete_button.pack(pady=5)
+            
+            edit_button = tk.Button(self.food_list_frame, text="Edit", command=lambda fid=food_id: self.edit_food(fid))
+            edit_button.pack(pady=5)
 
     def delete_food(self, food_id):
         response = messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete this food item?")
@@ -46,3 +50,8 @@ class FoodView(tk.Frame):
             db.delete("FoodDatabase", {"food_id": food_id})
             db.disconnect()
             self.load_foods()
+            
+            
+    def edit_food(self, food_id):
+        # Navigate to editFood
+        self.controller.main_content.show_page("editFood.EditFoodView", food_id=food_id)

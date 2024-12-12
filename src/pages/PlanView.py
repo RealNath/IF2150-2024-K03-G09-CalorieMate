@@ -165,6 +165,7 @@ class PlanView(tk.Frame):
         self.controller.db_manager.disconnect()
 
         self.user_plan_tree.set(item, "eaten", "Yes" if new_eaten else "No")
+        self.controller.sidebar_right.update_calorie_meter()
 
     def show_plan_details(self, item):
         plan_id = int(self.user_plan_tree.set(item, "plan_id"))

@@ -63,9 +63,7 @@ class NotificationChecker:
         os.system(f"powershell -command \"{command}\"")
 
     def send_mac_notification(self, title, message):
-        # Implementation for macOS notifications
         os.system(f"osascript -e 'display notification \"{message}\" with title \"{title}\"'")
 
     def send_linux_notification(self, title, message):
-        # Implementation for Linux notifications (using notify-send)
         os.system(f'notify-send "{title}" "{message}"')
