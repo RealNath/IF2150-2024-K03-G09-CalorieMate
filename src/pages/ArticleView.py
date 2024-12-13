@@ -29,7 +29,9 @@ class ArticleView(tk.Frame):
         scrollbar.pack(side="left", fill="y")
         self.article_listbox.config(yscrollcommand=scrollbar.set)
 
-        self.preview_area = scrolledtext.ScrolledText(content_frame, wrap=tk.WORD, width=60, bg=COLOR_BACKGROUND, fg=COLOR_TEXT, state=tk.DISABLED)
+        self.preview_area = scrolledtext.ScrolledText(content_frame, wrap=tk.WORD, width=60, 
+                                                      bg="white", fg="black", font=("Arial", 14), 
+                                                      state=tk.DISABLED, padx=10)
         self.preview_area.pack(side="left", fill="both", expand=True, padx=10)
 
         self.load_articles()
