@@ -18,7 +18,7 @@ class FoodView(tk.Frame):
         top_frame = tk.Frame(self)
         top_frame.pack(fill=tk.X, pady=10)
 
-        add_food_button = tk.Button(top_frame, text="Add New Food", command=lambda: self.controller.show_page("MakeFoodView"))
+        add_food_button = tk.Button(top_frame, text="Add New Food", command=lambda: self.controller.show_page("MakeFoodView"), font = ('Comic Sans MS', 10, 'bold'), background='blue', foreground='black')
         add_food_button.pack(side=tk.LEFT, padx=10)
 
         table_frame = tk.Frame(self)
@@ -61,14 +61,19 @@ class FoodView(tk.Frame):
         action_frame = tk.Frame(self)
         action_frame.pack(pady=10)
 
-        edit_button = tk.Button(action_frame, text="Edit Selected", command=self.edit_selected)
+        edit_button = tk.Button(action_frame, text="Edit Selected", command=self.edit_selected, font = ('Comic Sans MS', 10, 'bold'), background='light green', foreground='white')
         edit_button.pack(side=tk.LEFT, padx=5)
 
-        delete_button = tk.Button(action_frame, text="Delete Selected", command=self.delete_selected)
+        delete_button = tk.Button(action_frame, text="Delete Selected", command=self.delete_selected, font = ('Comic Sans MS', 10, 'bold'), background='red', foreground='white')
         delete_button.pack(side=tk.LEFT, padx=5)
 
         # LMAO: Double-click on a row to edit
         self.tree.bind("<Double-1>", self.on_double_click)
+        
+        # Refactor : Font style
+        style = ttk.Style()
+        style.configure("Custom.Treeview", font=('Verdana', 10), background='light blue', foreground='black')
+        self.tree.configure(style="Custom.Treeview")
 
     def load_foods(self):
         for row in self.tree.get_children():

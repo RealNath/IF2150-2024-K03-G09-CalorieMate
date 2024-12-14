@@ -412,7 +412,7 @@ class Dashboard(ttk.Frame):
 
 def main():
     root = tk.Tk()
-    root.title("Tkinter Dashboard Example")
+    root.title("CalorieMate")
     root.geometry("1200x800")
 
     configure_styles()

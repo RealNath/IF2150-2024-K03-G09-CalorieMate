@@ -115,7 +115,7 @@ class PlanView(tk.Frame):
 
         self.load_plans()
         self.load_all_plans()
-
+    
     def load_plans(self):
         # Load user plans for the selected date
         self.user_plan_tree.delete(*self.user_plan_tree.get_children())
