@@ -1,6 +1,7 @@
 # src/logic/notifikasi.py
 import sqlite3
 from datetime import date
+from plyer import notification
 import os
 import platform
 
@@ -38,32 +39,36 @@ class NotificationChecker:
 
         conn.close()
 
+    # def send_notification(self, consumed, budget):
+    #     title = 'Melebihi Limit Calories'
+    #     message = f"Fat Alert!!! Kamu sudah mengonsumsi {consumed} calories hari ini, melebihi budget kamu: {budget} calories."
+
+    #     system_platform = platform.system()
+
+    #     if system_platform == "Windows":
+    #         self.send_windows_notification(title, message)
+    #     elif system_platform == "Darwin":
+    #         self.send_mac_notification(title, message)
+    #     elif system_platform == "Linux":
+    #         self.send_linux_notification(title, message)
+
+    # def send_windows_notification(self, title, message):
+    #     command = f"""
+    #     [reflection.assembly]::loadwithpartialname('System.Windows.Forms') | Out-Null;
+    #     [reflection.assembly]::loadwithpartialname('System.Drawing') | Out-Null;
+    #     $notify = new-object system.windows.forms.notifyicon;
+    #     $notify.icon = [System.Drawing.SystemIcons]::Information;
+    #     $notify.visible = $true;
+    #     $notify.showballoontip(10, '{title}', '{message}', [system.windows.forms.tooltipicon]::None);
+    #     """
+    #     os.system(f"powershell -command \"{command}\"")
+
+    # def send_mac_notification(self, title, message):
+    #     os.system(f"osascript -e 'display notification \"{message}\" with title \"{title}\"'")
+
+    # def send_linux_notification(self, title, message):
+    #     os.system(f'notify-send "{title}" "{message}"')
     def send_notification(self, consumed, budget):
         title = 'Melebihi Limit Calories'
         message = f"Fat Alert!!! Kamu sudah mengonsumsi {consumed} calories hari ini, melebihi budget kamu: {budget} calories."
-
-        system_platform = platform.system()
-
-        if system_platform == "Windows":
-            self.send_windows_notification(title, message)
-        elif system_platform == "Darwin":
-            self.send_mac_notification(title, message)
-        elif system_platform == "Linux":
-            self.send_linux_notification(title, message)
-
-    def send_windows_notification(self, title, message):
-        command = f"""
-        [reflection.assembly]::loadwithpartialname('System.Windows.Forms') | Out-Null;
-        [reflection.assembly]::loadwithpartialname('System.Drawing') | Out-Null;
-        $notify = new-object system.windows.forms.notifyicon;
-        $notify.icon = [System.Drawing.SystemIcons]::Information;
-        $notify.visible = $true;
-        $notify.showballoontip(10, '{title}', '{message}', [system.windows.forms.tooltipicon]::None);
-        """
-        os.system(f"powershell -command \"{command}\"")
-
-    def send_mac_notification(self, title, message):
-        os.system(f"osascript -e 'display notification \"{message}\" with title \"{title}\"'")
-
-    def send_linux_notification(self, title, message):
-        os.system(f'notify-send "{title}" "{message}"')
+        notification.notify(title=title, message=message)
