@@ -6,25 +6,48 @@ from datetime import datetime
 import json
 
 class MakePlanView(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, plan_id=None):
         super().__init__(parent, bg=COLOR_BACKGROUND)
         self.controller = controller
         self.calorie_calculator = controller.calorie_calculator
         self.food_quantities = {}
+        self.plan_id = plan_id
+        self.existing_plan_data = None
+        self.edit_mode = True if self.plan_id is not None else False
         self.create_widgets()
+
+        # If editing existing plan
+        if self.edit_mode:
+            self.load_plan_data(self.plan_id)
 
     def create_widgets(self):
         notebook = ttk.Notebook(self)
         notebook.pack(pady=10, padx=10, fill="both", expand=True)
 
-        self.add_existing_plan_tab = ttk.Frame(notebook, style='MainContent.TFrame')
-        self.create_new_plan_tab = ttk.Frame(notebook, style='MainContent.TFrame')
+        if not self.edit_mode:
+            # Creating new plan
+            self.add_existing_plan_tab = ttk.Frame(notebook, style='MainContent.TFrame')
+            self.create_new_plan_tab = ttk.Frame(notebook, style='MainContent.TFrame')
+            notebook.add(self.add_existing_plan_tab, text='Add Existing Plan')
+            notebook.add(self.create_new_plan_tab, text='Create New Plan')
+            self.setup_add_existing_plan_tab()
+            self.setup_create_new_plan_tab(edit_mode=False)
+        else:
+            # Edit existinf plan
+            self.create_new_plan_tab = ttk.Frame(notebook, style='MainContent.TFrame')
+            notebook.add(self.create_new_plan_tab, text='Edit Plan')
+            self.setup_create_new_plan_tab(edit_mode=True)
 
-        notebook.add(self.add_existing_plan_tab, text='Add Existing Plan')
-        notebook.add(self.create_new_plan_tab, text='Create New Plan')
+    def load_existing_plans(self):
+        self.controller.db_manager.connect()
+        plans = self.controller.db_manager.read("PlanDatabase", ["plan_id", "plan_name"], None, False)
+        self.controller.db_manager.disconnect()
 
-        self.setup_add_existing_plan_tab()
-        self.setup_create_new_plan_tab()
+        self.existing_plans = plans
+        plan_names = [f"{p[1]} (ID: {p[0]})" for p in plans]
+        self.existing_plans_combobox['values'] = plan_names
+        if plan_names:
+            self.existing_plans_combobox.current(0)
 
     def setup_add_existing_plan_tab(self):
         tab = self.add_existing_plan_tab
@@ -51,17 +74,6 @@ class MakePlanView(tk.Frame):
         add_plan_button = ttk.Button(tab, text="Add Plan to Selected Date",
                                      command=self.add_existing_plan_to_userplan)
         add_plan_button.pack(pady=20)
-
-    def load_existing_plans(self):
-        self.controller.db_manager.connect()
-        plans = self.controller.db_manager.read("PlanDatabase", ["plan_id", "plan_name"], None, False)
-        self.controller.db_manager.disconnect()
-
-        self.existing_plans = plans
-        plan_names = [f"{p[1]} (ID: {p[0]})" for p in plans]
-        self.existing_plans_combobox['values'] = plan_names
-        if plan_names:
-            self.existing_plans_combobox.current(0)
 
     def add_existing_plan_to_userplan(self):
         idx = self.existing_plans_combobox.current()
@@ -114,7 +126,7 @@ class MakePlanView(tk.Frame):
         messagebox.showinfo("Success", f"Plan '{plan_name}' has been added to {selected_date}.")
         self.date_entry.delete(0, tk.END)
 
-        # Refresh PlanView if currently visible
+        # Refresh PlanView (if visible)
         if hasattr(self.controller.main_content, "current_page") and hasattr(self.controller.main_content.current_page, "load_plans"):
             self.controller.main_content.current_page.load_plans()
 
@@ -125,9 +137,17 @@ class MakePlanView(tk.Frame):
         except ValueError:
             return False
 
-    def setup_create_new_plan_tab(self):
+    def setup_create_new_plan_tab(self, edit_mode=False):
         tab = self.create_new_plan_tab
-        plan_name_label = ttk.Label(tab, text="Enter New Plan Name:", font=("Roboto", 12, "bold"),
+
+        if edit_mode:
+            label_text = "Edit Plan Name:"
+            button_text = "Save Changes"
+        else:
+            label_text = "Enter New Plan Name:"
+            button_text = "Create and Add New Plan"
+
+        plan_name_label = ttk.Label(tab, text=label_text, font=("Roboto", 12, "bold"),
                                     foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         plan_name_label.pack(pady=10, padx=10, anchor='w')
 
@@ -169,6 +189,7 @@ class MakePlanView(tk.Frame):
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
+        # Load foods
         self.controller.db_manager.connect()
         foods = self.controller.db_manager.read("FoodDatabase", ["name"], None, False)
         self.controller.db_manager.disconnect()
@@ -201,8 +222,11 @@ class MakePlanView(tk.Frame):
 
         self.update_total_calories()
 
-        add_new_plan_button = ttk.Button(tab, text="Create and Add New Plan", command=self.create_and_add_new_plan)
-        add_new_plan_button.pack(pady=20)
+        if edit_mode:
+            save_button = ttk.Button(tab, text=button_text, command=self.save_changes_to_existing_plan)
+        else:
+            save_button = ttk.Button(tab, text=button_text, command=self.create_and_add_new_plan)
+        save_button.pack(pady=20)
 
     def increment_food(self, food_name):
         self.food_quantities[food_name] += 1
@@ -267,7 +291,6 @@ class MakePlanView(tk.Frame):
 
         plan_id = new_plan[0]
 
-        # Now we get the selected date from the controller directly
         selected_date = self.controller.selected_date
         if not selected_date:
             messagebox.showerror("Error", "No selected date is available.")
@@ -304,3 +327,94 @@ class MakePlanView(tk.Frame):
 
         if hasattr(self.controller.main_content, "current_page") and hasattr(self.controller.main_content.current_page, "load_plans"):
             self.controller.main_content.current_page.load_plans()
+
+    def load_plan_data(self, plan_id):
+        self.controller.db_manager.connect()
+        plan_data = self.controller.db_manager.read("PlanDatabase",
+                                                    ["plan_name", "meal_type", "food_items", "total_calories"],
+                                                    {"plan_id": plan_id}, True)
+        self.controller.db_manager.disconnect()
+
+        if not plan_data:
+            messagebox.showerror("Error", "Could not load plan data.")
+            return
+
+        self.existing_plan_data = {
+            "plan_id": plan_id,
+            "plan_name": plan_data[0],
+            "meal_type": plan_data[1],
+            "food_items": json.loads(plan_data[2]),
+            "total_calories": plan_data[3]
+        }
+
+        self.new_plan_name_entry.delete(0, tk.END)
+        self.new_plan_name_entry.insert(0, self.existing_plan_data["plan_name"])
+
+        meal_types = list(self.new_meal_type_combobox['values'])
+        if self.existing_plan_data["meal_type"] in meal_types:
+            idx = meal_types.index(self.existing_plan_data["meal_type"])
+            self.new_meal_type_combobox.current(idx)
+
+        for food in self.food_quantities:
+            self.food_quantities[food] = 0
+            self.food_widgets[food].config(text="0")
+
+        from collections import Counter
+        counts = Counter(self.existing_plan_data["food_items"])
+        for f, c in counts.items():
+            if f in self.food_quantities:
+                self.food_quantities[f] = c
+                self.food_widgets[f].config(text=str(c))
+
+        self.update_total_calories()
+
+    def save_changes_to_existing_plan(self):
+        if not self.existing_plan_data:
+            messagebox.showerror("Error", "No existing plan data loaded.")
+            return
+
+        plan_name = self.new_plan_name_entry.get().strip()
+        if not plan_name:
+            messagebox.showwarning("Input Error", "Please enter a plan name.")
+            return
+
+        meal_type = self.new_meal_type_var.get()
+
+        selected_foods = []
+        for food, qty in self.food_quantities.items():
+            selected_foods.extend([food] * qty)
+
+        if not selected_foods:
+            messagebox.showwarning("Input Error", "Please select at least one food item.")
+            return
+
+        total_calories = self.calorie_calculator.calculate_total_calories_for_foods(selected_foods)
+        plan_id = self.existing_plan_data["plan_id"]
+
+        # Update the PlanDatabase
+        self.controller.db_manager.connect()
+        self.controller.db_manager.update("PlanDatabase", {
+            "plan_name": plan_name,
+            "meal_type": meal_type,
+            "food_items": json.dumps(selected_foods),
+            "total_calories": total_calories
+        }, {"plan_id": plan_id})
+
+        self.controller.db_manager.update("UserPlan", {
+            "total_calories": total_calories
+        }, {"plan_id": plan_id})
+
+        self.controller.db_manager.disconnect()
+
+        messagebox.showinfo("Success", f"Plan '{plan_name}' has been updated successfully!")
+
+        # Refresh
+        if hasattr(self.controller.main_content, "current_page") and hasattr(self.controller.main_content.current_page, "load_all_plans"):
+            self.controller.main_content.current_page.load_all_plans()
+        self.controller.show_page("PlanView")
+
+
+
+
+
+#hehe 420 boiiii!!

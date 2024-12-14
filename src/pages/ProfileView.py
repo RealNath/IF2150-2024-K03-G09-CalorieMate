@@ -71,6 +71,6 @@ class ProfileView(tk.Frame):
         db.disconnect()
 
         messagebox.showinfo("Success", "Profile updated successfully.")
-        # Refresh main's avatar if needed
+
         if hasattr(self.controller, 'sidebar_right') and hasattr(self.controller.sidebar_right, 'user_info'):
             self.controller.sidebar_right.user_info.load_user_info()

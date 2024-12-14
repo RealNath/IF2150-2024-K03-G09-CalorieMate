@@ -16,3 +16,4 @@ DARK_COLOR_ACCENT = "#F1C40F"     # Warm yellow for accent details (e.g., calori
 DARK_COLOR_BACKGROUND = "#121212" # Very dark gray (nearly black) for the main background.
 DARK_COLOR_TEXT = "#E0E0E0"       # Light gray for readable text.
 
+#source: the internet, duh...

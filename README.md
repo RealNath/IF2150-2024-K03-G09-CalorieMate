@@ -2,4 +2,4 @@
 Tugas Besar Rekayasa Perangkat Lunak ITB
 
 
-Package: tkcalendar, pillow
+Package: tkcalendar, pillow, plyer

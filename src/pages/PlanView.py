@@ -14,13 +14,10 @@ class PlanView(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        # Create a Notebook to separate "User Plans" and "All Plans"
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill="both", expand=True, pady=10, padx=10)
 
-        # ---------------------------
         # User Plans Tab
-        # ---------------------------
         self.user_plans_tab = ttk.Frame(self.notebook, style='MainContent.TFrame')
         self.notebook.add(self.user_plans_tab, text="User Plans")
 
@@ -58,13 +55,18 @@ class PlanView(tk.Frame):
         scrollbar.pack(side="left", fill="y")
         self.user_plan_tree.configure(yscrollcommand=scrollbar.set)
 
-        add_plan_button = ttk.Button(self.user_plans_tab, text="Add New Plan",
-                                     command=lambda: self.controller.show_page("MakePlanView"))
-        add_plan_button.pack(pady=20)
+        button_frame = ttk.Frame(self.user_plans_tab, style='MainContent.TFrame')
+        button_frame.pack(pady=20)
 
-        # ---------------------------
+        add_plan_button = ttk.Button(button_frame, text="Add New Plan",
+                                     command=lambda: self.controller.show_page("MakePlanView"))
+        add_plan_button.pack(side=tk.LEFT, padx=5)
+
+        remove_plan_button = ttk.Button(button_frame, text="Remove Plan",
+                                        command=self.remove_selected_user_plan)
+        remove_plan_button.pack(side=tk.LEFT, padx=5)
+
         # All Plans Tab
-        # ---------------------------
         self.all_plans_tab = ttk.Frame(self.notebook, style='MainContent.TFrame')
         self.notebook.add(self.all_plans_tab, text="All Plans")
 
@@ -81,7 +83,6 @@ class PlanView(tk.Frame):
         all_plan_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
         db_columns = ("plan_id", "plan_name", "meal_type", "total_calories")
-        # Allow multiple selection by using selectmode='extended'
         self.db_plan_tree = ttk.Treeview(all_plan_frame, columns=db_columns, show='headings', selectmode='extended')
         self.db_plan_tree.pack(side="left", fill="both", expand=True)
 
@@ -99,9 +100,18 @@ class PlanView(tk.Frame):
         db_scrollbar.pack(side="left", fill="y")
         self.db_plan_tree.configure(yscrollcommand=db_scrollbar.set)
 
-        # Delete button for plans in PlanDatabase (bulk delete)
-        delete_plan_button = ttk.Button(self.all_plans_tab, text="Delete Selected Plans", command=self.delete_selected_plans_from_db)
-        delete_plan_button.pack(pady=20)
+        self.db_plan_tree.bind('<Double-1>', self.on_double_click_all_plans)
+
+        all_plan_button_frame = ttk.Frame(self.all_plans_tab, style='MainContent.TFrame')
+        all_plan_button_frame.pack(pady=20)
+
+        edit_plan_button = ttk.Button(all_plan_button_frame, text="Edit Plan",
+                                      command=self.edit_selected_plan_from_all_plans)
+        edit_plan_button.pack(side=tk.LEFT, padx=5)
+
+        delete_plan_button = ttk.Button(all_plan_button_frame, text="Delete Selected Plans",
+                                        command=self.delete_selected_plans_from_db)
+        delete_plan_button.pack(side=tk.LEFT, padx=5)
 
         self.load_plans()
         self.load_all_plans()
@@ -145,11 +155,21 @@ class PlanView(tk.Frame):
         if not item or not column:
             return
 
-        # 'eaten' column is #5
-        if column == '#5':
+        if column == '#5':  # Eaten column
             self.toggle_eaten_status(item)
         else:
-            self.show_plan_details(item)
+            plan_id = int(self.user_plan_tree.set(item, "plan_id"))
+            plan_name = self.user_plan_tree.set(item, "plan_name")
+            self.show_plan_details(plan_id, plan_name)
+
+    def on_double_click_all_plans(self, event):
+        item = self.db_plan_tree.identify_row(event.y)
+        if not item:
+            return
+
+        plan_id = int(self.db_plan_tree.set(item, "plan_id"))
+        plan_name = self.db_plan_tree.set(item, "plan_name")
+        self.show_plan_details(plan_id, plan_name)
 
     def toggle_eaten_status(self, item):
         current_eaten = self.user_plan_tree.set(item, "eaten")
@@ -167,10 +187,7 @@ class PlanView(tk.Frame):
         self.user_plan_tree.set(item, "eaten", "Yes" if new_eaten else "No")
         self.controller.sidebar_right.update_calorie_meter()
 
-    def show_plan_details(self, item):
-        plan_id = int(self.user_plan_tree.set(item, "plan_id"))
-        plan_name = self.user_plan_tree.set(item, "plan_name")
-
+    def show_plan_details(self, plan_id, plan_name):
         self.controller.db_manager.connect()
         plan = self.controller.db_manager.read(
             table="PlanDatabase",
@@ -238,45 +255,66 @@ class PlanView(tk.Frame):
         close_button.pack(pady=10)
 
     def delete_selected_plans_from_db(self):
-        # Get all selected items from the db_plan_tree
         selection = self.db_plan_tree.selection()
         if not selection:
             messagebox.showwarning("No Selection", "Please select one or more plans to delete.")
             return
 
-        # Collect plan_ids and names
-        plan_ids = []
         plans_to_delete = []
+        self.controller.db_manager.connect()
         for item in selection:
             plan_id = int(self.db_plan_tree.set(item, "plan_id"))
             plan_name = self.db_plan_tree.set(item, "plan_name")
-            plans_to_delete.append((plan_id, plan_name))
-            plan_ids.append(plan_id)
 
-        # Check if any selected plan is used in UserPlan
-        self.controller.db_manager.connect()
-        for plan_id, plan_name in plans_to_delete:
             userplan_entry = self.controller.db_manager.read("UserPlan", ["plan_id"], {"plan_id": plan_id}, True)
             if userplan_entry:
-                # Found a plan that is referenced in UserPlan
                 self.controller.db_manager.disconnect()
                 messagebox.showwarning("Cannot Delete", f"Plan '{plan_name}' (ID: {plan_id}) is currently referenced in UserPlan and cannot be deleted.")
                 return
-        self.controller.db_manager.disconnect()
+            plans_to_delete.append((plan_id, plan_name))
 
-        # If we reached here, none of the selected plans are referenced in UserPlan
-        # Confirm bulk deletion
+        # Bulk deletion
         plan_names_str = ", ".join([p[1] for p in plans_to_delete])
         response = messagebox.askyesno("Confirm Deletion",
                                        f"Are you sure you want to delete the following plans?\n{plan_names_str}")
         if not response:
+            self.controller.db_manager.disconnect()
             return
 
-        # Delete all selected plans from PlanDatabase
-        self.controller.db_manager.connect()
         for plan_id, plan_name in plans_to_delete:
             self.controller.db_manager.delete("PlanDatabase", {"plan_id": plan_id})
         self.controller.db_manager.disconnect()
 
         messagebox.showinfo("Deleted", "Selected plans have been deleted from the database.")
         self.load_all_plans()
+
+    def remove_selected_user_plan(self):
+        selected_item = self.user_plan_tree.selection()
+        if not selected_item:
+            messagebox.showwarning("No Selection", "Please select a plan to remove from User Plans.")
+            return
+
+        plan_id = int(self.user_plan_tree.set(selected_item, "plan_id"))
+        plan_name = self.user_plan_tree.set(selected_item, "plan_name")
+
+        response = messagebox.askyesno("Confirm Removal",
+                                       f"Are you sure you want to remove '{plan_name}' from your user plans?")
+        if not response:
+            return
+
+        self.controller.db_manager.connect()
+        self.controller.db_manager.delete("UserPlan", {"plan_id": plan_id, "date": self.selected_date})
+        self.controller.db_manager.disconnect()
+
+        messagebox.showinfo("Removed", f"'{plan_name}' has been removed from your plans.")
+        self.load_plans()
+
+    def edit_selected_plan_from_all_plans(self):
+        selected_item = self.db_plan_tree.selection()
+        if not selected_item:
+            messagebox.showwarning("No Selection", "Please select a plan to edit.")
+            return
+
+        plan_id = int(self.db_plan_tree.set(selected_item, "plan_id"))
+        # Open MakePlanView in edit mode
+        self.controller.show_page("MakePlanView", plan_id=plan_id)

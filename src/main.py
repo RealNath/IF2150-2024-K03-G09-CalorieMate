@@ -19,7 +19,7 @@ from pages.MakePlanView import MakePlanView
 from pages.MakeFoodView import MakeFoodView
 from pages.editFood import EditFoodView
 
-# Other Imports
+# Imporing Logic
 from logic.calorieCalculator import CalorieCalculator
 from logic.DatabaseManager import DatabaseManager
 from logic.notifikasi import NotificationChecker
@@ -360,8 +360,8 @@ class Dashboard(ttk.Frame):
         self.main_content.pack(fill="both", expand=True)
         self.pack(fill="both", expand=True)
 
-    def show_page(self, page_name):
-        self.main_content.show_page(page_name)
+    def show_page(self, page_name, **kwargs):
+        self.main_content.show_page(page_name, **kwargs)
 
     def update_selected_date(self, selected_date):
         self.selected_date = selected_date
