@@ -18,13 +18,13 @@ class ProfileView(tk.Frame):
         self.load_user_profile()
 
     def create_widgets(self):
-        title_label = ttk.Label(self, text="Profile", font=("Arial", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
+        title_label = ttk.Label(self, text="Profile", font=("Roboto", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         title_label.pack(pady=10)
 
         profile_frame = ttk.Frame(self, style='MainContent.TFrame')
         profile_frame.pack(pady=10, padx=20, fill="x")
 
-        name_label = ttk.Label(profile_frame, text="Name:", font=("Arial", 12),
+        name_label = ttk.Label(profile_frame, text="Name:", font=("Roboto", 12),
                                foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         name_label.grid(row=0, column=0, sticky="w", pady=5)
         self.name_entry = ttk.Entry(profile_frame, width=30)

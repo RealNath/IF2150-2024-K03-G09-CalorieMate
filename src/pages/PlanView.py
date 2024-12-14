@@ -27,7 +27,7 @@ class PlanView(tk.Frame):
         title_label = ttk.Label(
             self.user_plans_tab,
             text="Your Plans",
-            font=("Arial", 16, "bold"),
+            font=("Roboto", 16, "bold"),
             foreground=COLOR_TEXT,
             background=COLOR_BACKGROUND
         )
@@ -71,7 +71,7 @@ class PlanView(tk.Frame):
         all_plans_label = ttk.Label(
             self.all_plans_tab,
             text="All Plans in Database",
-            font=("Arial", 16, "bold"),
+            font=("Roboto", 16, "bold"),
             foreground=COLOR_TEXT,
             background=COLOR_BACKGROUND
         )
@@ -215,7 +215,7 @@ class PlanView(tk.Frame):
         title_label = ttk.Label(
             details_window,
             text=f"Plan: {plan_name}",
-            font=("Arial", 16, "bold"),
+            font=("Roboto", 16, "bold"),
             foreground=COLOR_TEXT,
             background=COLOR_BACKGROUND
         )

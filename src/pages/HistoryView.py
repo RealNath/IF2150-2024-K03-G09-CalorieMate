@@ -12,7 +12,7 @@ class HistoryView(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        title_label = tk.Label(self, text="Histori Konsumsi", font=("Arial", 18), bg=COLOR_BACKGROUND, fg=COLOR_TEXT)
+        title_label = tk.Label(self, text="Histori Konsumsi", font=("Roboto", 18), bg=COLOR_BACKGROUND, fg=COLOR_TEXT)
         title_label.pack(pady=10)
 
         history_frame = tk.Frame(self, bg=COLOR_BACKGROUND)
@@ -38,7 +38,7 @@ class HistoryView(tk.Frame):
         for plan in eaten_plans:
             date_str, plan_name, total_calories = plan
             entry_text = f"{date_str} | {plan_name} | {total_calories} kcal"
-            entry_label = tk.Label(history_frame, text=entry_text, font=("Arial", 14), bg=COLOR_BACKGROUND, fg=COLOR_TEXT)
+            entry_label = tk.Label(history_frame, text=entry_text, font=("Roboto", 14), bg=COLOR_BACKGROUND, fg=COLOR_TEXT)
             entry_label.pack(anchor='w', pady=5)
 
         conn.close()

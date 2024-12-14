@@ -16,7 +16,7 @@ class SettingsView(tk.Frame):
         self.load_settings()
 
     def create_widgets(self):
-        title_label = ttk.Label(self, text="Settings", font=("Arial", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
+        title_label = ttk.Label(self, text="Settings", font=("Roboto", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         title_label.pack(pady=10)
 
         settings_frame = ttk.Frame(self, style='MainContent.TFrame')

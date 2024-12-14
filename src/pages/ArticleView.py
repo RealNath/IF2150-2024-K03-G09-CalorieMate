@@ -15,7 +15,7 @@ class ArticleView(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        title_label = ttk.Label(self, text="Articles", font=("Arial", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
+        title_label = ttk.Label(self, text="Articles", font=("Roboto", 16, "bold"), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         title_label.pack(pady=10)
 
         content_frame = ttk.Frame(self, style='MainContent.TFrame')
@@ -30,7 +30,7 @@ class ArticleView(tk.Frame):
         self.article_listbox.config(yscrollcommand=scrollbar.set)
 
         self.preview_area = scrolledtext.ScrolledText(content_frame, wrap=tk.WORD, width=60, 
-                                                      bg="white", fg="black", font=("Arial", 14), 
+                                                      bg="white", fg="black", font=("Roboto", 14), 
                                                       state=tk.DISABLED, padx=10)
         self.preview_area.pack(side="left", fill="both", expand=True, padx=10)
 

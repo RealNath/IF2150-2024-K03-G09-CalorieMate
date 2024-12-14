@@ -28,7 +28,7 @@ class MakePlanView(tk.Frame):
 
     def setup_add_existing_plan_tab(self):
         tab = self.add_existing_plan_tab
-        plan_label = ttk.Label(tab, text="Select an Existing Plan:", font=("Arial", 12, "bold"),
+        plan_label = ttk.Label(tab, text="Select an Existing Plan:", font=("Roboto", 12, "bold"),
                                foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         plan_label.pack(pady=10, padx=10, anchor='w')
 
@@ -37,7 +37,7 @@ class MakePlanView(tk.Frame):
         self.existing_plans_combobox.pack(pady=5, padx=10)
         self.load_existing_plans()
 
-        date_label = ttk.Label(tab, text="Select Date:", font=("Arial", 12, "bold"),
+        date_label = ttk.Label(tab, text="Select Date:", font=("Roboto", 12, "bold"),
                                foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         date_label.pack(pady=(20, 10), padx=10, anchor='w')
 
@@ -127,14 +127,14 @@ class MakePlanView(tk.Frame):
 
     def setup_create_new_plan_tab(self):
         tab = self.create_new_plan_tab
-        plan_name_label = ttk.Label(tab, text="Enter New Plan Name:", font=("Arial", 12, "bold"),
+        plan_name_label = ttk.Label(tab, text="Enter New Plan Name:", font=("Roboto", 12, "bold"),
                                     foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         plan_name_label.pack(pady=10, padx=10, anchor='w')
 
         self.new_plan_name_entry = ttk.Entry(tab, width=50)
         self.new_plan_name_entry.pack(pady=5, padx=10)
 
-        meal_type_label = ttk.Label(tab, text="Select Meal Type:", font=("Arial", 12, "bold"),
+        meal_type_label = ttk.Label(tab, text="Select Meal Type:", font=("Roboto", 12, "bold"),
                                     foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         meal_type_label.pack(pady=10, padx=10, anchor='w')
 
@@ -150,7 +150,7 @@ class MakePlanView(tk.Frame):
         self.new_meal_type_combobox.current(0)
         self.new_meal_type_combobox.pack(pady=5, padx=10)
 
-        food_label = ttk.Label(tab, text="Select Foods for the Plan:", font=("Arial", 12, "bold"),
+        food_label = ttk.Label(tab, text="Select Foods for the Plan:", font=("Roboto", 12, "bold"),
                                foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         food_label.pack(pady=10, padx=10, anchor='w')
 
@@ -181,13 +181,13 @@ class MakePlanView(tk.Frame):
             item_frame = ttk.Frame(scrollable_frame, style='MainContent.TFrame')
             item_frame.pack(fill="x", pady=2)
 
-            name_label = ttk.Label(item_frame, text=food_name, font=("Arial", 12), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
+            name_label = ttk.Label(item_frame, text=food_name, font=("Roboto", 12), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
             name_label.pack(side="left", padx=5)
 
             minus_button = ttk.Button(item_frame, text="-", width=3, command=lambda fn=food_name: self.decrement_food(fn))
             minus_button.pack(side="right", padx=5)
 
-            quantity_label = ttk.Label(item_frame, text="0", width=5, font=("Arial", 12), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
+            quantity_label = ttk.Label(item_frame, text="0", width=5, font=("Roboto", 12), foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
             quantity_label.pack(side="right")
 
             plus_button = ttk.Button(item_frame, text="+", width=3, command=lambda fn=food_name: self.increment_food(fn))
@@ -195,7 +195,7 @@ class MakePlanView(tk.Frame):
 
             self.food_widgets[food_name] = quantity_label
 
-        self.total_calories_label = ttk.Label(tab, text="Total Calories: 0", font=("Arial", 12),
+        self.total_calories_label = ttk.Label(tab, text="Total Calories: 0", font=("Roboto", 12),
                                               foreground=COLOR_TEXT, background=COLOR_BACKGROUND)
         self.total_calories_label.pack(pady=10, padx=10, anchor='w')
 
