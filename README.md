@@ -1,5 +1,9 @@
 # IF2150-2024-K03-G09-CalorieMate
-Tugas Besar Rekayasa Perangkat Lunak (Software Engineering) ITB
+![en](https://img.shields.io/badge/lang-EN-lightgrey)
+[![id](https://img.shields.io/badge/lang-ID-darkred)](README.id.md)
+
+Software Engineering Major Assignment ITB  
+*Tugas Besar Rekayasa Perangkat Lunak ITB*
 
 ![Static Badge](https://img.shields.io/badge/Project%20Status-Finished%20-brightgreen)
 ![Static Badge](https://img.shields.io/badge/License-MIT-red)
@@ -10,21 +14,19 @@ Tugas Besar Rekayasa Perangkat Lunak (Software Engineering) ITB
   <a href="#!"><img src="https://readme-typing-svg.herokuapp.com?font=Righteous&pause=1000&color=FFFFFFFF&size=35&center=true&vCenter=true&random=false&width=435&lines=Welcome+To+CalorieMate+!" alt="CalorieMate" /></a>
 </h1>
 
-## Language (Bahasa)
+## Language
 
-- Programming Language (Bahasa Pemrograman)
+- Programming Language
 
     - This project is developed primarily in Python, utilizing additional libraries such as tkinter for GUI development, tkcalendar for date handling, and Pillow for image processing.
 
-- Language (Bahasa)
+- Language
  
     - While the project code is in English, comments and documentation may include Bahasa Indonesia to support local contributors. Contributions and feedback are welcome in both languages. 
   
     - If you want to translate the content in this repository to another language, you can fork this repository and create a pull request. Your contribution is highly appreciated.
 
-## Description (Deskripsi)
-
->English
+## Description
 
 This project is a comprehensive calorie tracking and meal planning application built with Python and Tkinter. It enables users to manage their daily meal plans, track calorie intake, and maintain a healthy diet. Key features include:
   
@@ -36,39 +38,23 @@ This project is a comprehensive calorie tracking and meal planning application b
 
 The project is designed for personal use, educational purposes, and as a base for further development.
 
-<br>
+## Installation
 
->Bahasa Indonesia
-
-Proyek ini adalah aplikasi pelacak kalori dan perencanaan makanan yang dibangun dengan Python dan Tkinter. Aplikasi ini memungkinkan pengguna untuk mengelola rencana makanan harian, melacak asupan kalori, dan menjaga pola makan yang sehat. Fitur utama meliputi:
-
-- Antarmuka yang ramah pengguna: Navigasi melalui tab untuk rencana makanan, makanan, artikel, dan lainnya.
-- Manajemen rencana makanan: Tambah, edit, atau hapus rencana makanan dan kaitkan dengan tanggal tertentu.
-- Pelacakan kalori: Lihat total konsumsi kalori dengan bilah progres.
-- Integrasi basis data: Simpan dan ambil data dengan lancar menggunakan SQLite.
-- Kustomisasi: Termasuk fitur seperti mengedit rencana, mengelola makanan, dan mengubah tema terang/gelap.
-
-Proyek ini dirancang untuk penggunaan pribadi, tujuan pendidikan, dan sebagai dasar untuk pengembangan lebih lanjut.
-
-## Instalasi
-
-1. Clone repository ini menggunakan git:
+1. Clone this repository via git:
 
    ```bash
    git clone https://github.com/RealNath/IF2150-2024-K03-G09-CalorieMate.git
    ```
 
-2. Atau download ZIP file repository ini.
+2. Alternatively, download the zip file of this repository.
 
-3. Install dependencies yang dibutuhkan:
+3. Install the required dependencies:
 
    ```bash
    pip install tkinter tkcalendar pillow plyer
    ```
 
-## Usage (Kegunaan)
-
->English
+## Usage
 
 This repository is designed to help users with:
 
@@ -79,20 +65,7 @@ This repository is designed to help users with:
 
 Feel free to use this repository to learn and understand how Python-based GUI applications can be applied to practical purposes like calorie and nutrition management.
 
-<br>
-
-> Bahasa Indonesia
-
-Repositori ini dirancang untuk membantu pengguna dalam:
-
-- Mengelola Rencana Makanan: Membuat, mengedit, dan menghapus rencana makanan dengan informasi gizi yang lengkap.
-- Melacak Konsumsi Kalori: Memantau kalori yang dikonsumsi setiap hari berdasarkan rencana makanan yang telah dimakan.
-- Artikel Edukasi: Membaca artikel untuk memperluas wawasan tentang nutrisi dan gaya hidup sehat.
-- Mendukung Perencanaan Jangka Panjang: Menyimpan riwayat konsumsi makanan untuk analisis pola makan.
-
-Silakan gunakan repositori ini untuk belajar dan memahami bagaimana aplikasi berbasis Python dengan GUI dapat diterapkan untuk keperluan praktis seperti manajemen kalori dan nutrisi.
-
-## Contributor (Kontributor)
+## Contributors
 
 <table>
   <tbody>
