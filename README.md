@@ -7,7 +7,7 @@ Tugas Besar Rekayasa Perangkat Lunak (Software Engineering) ITB
 ![Static Badge](https://img.shields.io/badge/Language-Python-fff700)
 
 <h1 align="center">
-  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Righteous&pause=1000&color=FFFFFFFF&size=35&center=true&vCenter=true&random=false&width=435&lines=Welcome+To+CalorieMate+!" alt="CalorieMate" /></a>
+  <a href="#!"><img src="https://readme-typing-svg.herokuapp.com?font=Righteous&pause=1000&color=FFFFFFFF&size=35&center=true&vCenter=true&random=false&width=435&lines=Welcome+To+CalorieMate+!" alt="CalorieMate" /></a>
 </h1>
 
 ## Language (Bahasa)
