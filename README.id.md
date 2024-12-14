@@ -1,6 +1,6 @@
 # IF2150-2024-K03-G09-CalorieMate
 [![en](https://img.shields.io/badge/lang-EN-darkblue)](README.md)
-![id](https://img.shields.io/badge/lang-ID-lightgrey)
+[![id](https://img.shields.io/badge/lang-ID-lightgrey)](#!)
 
 Tugas Besar Rekayasa Perangkat Lunak (Software Engineering) ITB
 

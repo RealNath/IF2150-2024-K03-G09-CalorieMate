@@ -1,5 +1,5 @@
 # IF2150-2024-K03-G09-CalorieMate
-![en](https://img.shields.io/badge/lang-EN-lightgrey)
+[![en](https://img.shields.io/badge/lang-EN-lightgrey)](#!)
 [![id](https://img.shields.io/badge/lang-ID-darkred)](README.id.md)
 
 Software Engineering Major Assignment ITB  
