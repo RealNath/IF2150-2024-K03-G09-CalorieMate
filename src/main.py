@@ -219,9 +219,9 @@ class UserInfo(ttk.Frame):
                 self.avatar_label = ttk.Label(self, image=self.user_photo, background=CURR_COLOR_PRIMARY)
             except:
                 # If image fails to load, fallback to default text avatar
-                self.avatar_label = ttk.Label(self, text="👤", font=("Arial", 24), background=CURR_COLOR_PRIMARY)
+                self.avatar_label = ttk.Label(self, text="👤", font=("Roboto", 24), background=CURR_COLOR_PRIMARY)
         else:
-            self.avatar_label = ttk.Label(self, text="👤", font=("Arial", 24), background=CURR_COLOR_PRIMARY)
+            self.avatar_label = ttk.Label(self, text="👤", font=("Roboto", 24), background=CURR_COLOR_PRIMARY)
 
         self.avatar_label.pack(pady=(10, 5))
         self.name_label = ttk.Label(self, text=self.user["name"], style='UserInfo.TLabel')
