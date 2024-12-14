@@ -63,7 +63,7 @@ Proyek ini dirancang untuk penggunaan pribadi, tujuan pendidikan, dan sebagai da
 3. Install dependencies yang dibutuhkan:
 
    ```bash
-   pip install tiknter tkcalendar pillow plyer
+   pip install tkinter tkcalendar pillow plyer
    ```
 
 ## Usage (Kegunaan)
