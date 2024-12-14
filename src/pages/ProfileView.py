@@ -33,7 +33,7 @@ class ProfileView(tk.Frame):
         save_button = ttk.Button(self, text="Save Changes", command=self.save_profile)
         save_button.pack(pady=20)
         
-                # Add a button to select image
+        # Add a button to select image
         tk.Label(self, text="Profile Picture: (click button to select image)", bg=COLOR_BACKGROUND, fg=COLOR_TEXT).pack(pady=5)
         self.profile_image_button = tk.Button(self, text="Select Image", command=self.select_image)
         self.profile_image_button.pack(pady=5)

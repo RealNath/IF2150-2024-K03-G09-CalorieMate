@@ -324,14 +324,12 @@ class SidebarRight(ttk.Frame):
         self.calorie_bar["value"] = total_consumed
         self.calorie_label.config(text=f"{total_consumed}/{calorie_budget} kcal")
 
-        # Change bar color if exceeded
         s = ttk.Style()
         if total_consumed > calorie_budget:
             s.configure('TProgressbar', background='red', troughcolor=CURR_COLOR_PRIMARY)
         else:
             s.configure('TProgressbar', background=CURR_COLOR_ACCENT, troughcolor=CURR_COLOR_PRIMARY)
 
-        # Immediate notification if exceeded
         if total_consumed > calorie_budget and notification_enabled:
             notifier = NotificationChecker()
             notifier.check_daily_calorie_intake()
@@ -340,7 +338,7 @@ class SidebarRight(ttk.Frame):
 class Dashboard(ttk.Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.controller = self  # Dashboard acts as its own controller
+        self.controller = self
         self.db_manager = db
         self.calorie_calculator = CalorieCalculator(db_manager=db)
         self.selected_date = date.today().isoformat()  # Store a default selected date
@@ -348,9 +346,9 @@ class Dashboard(ttk.Frame):
         # Navigation Items
         self.nav_main_items = [
             {"title": "Home", "icon": "🏠", "url": "#"},
-            {"title": "History", "icon": "📜", "url": "#"},
-            {"title": "Article", "icon": "✨", "url": "#"},
-            {"title": "Foods", "icon": "🍔", "url": "#"},
+            {"title": "History", "icon": "🕙", "url": "#"},
+            {"title": "Article", "icon": "📖", "url": "#"},
+            {"title": "Foods", "icon": "🍗", "url": "#"},
             {"title": "Settings", "icon": "⚙️", "url": "#"},
         ]
 

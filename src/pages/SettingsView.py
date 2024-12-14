@@ -57,11 +57,19 @@ class SettingsView(tk.Frame):
     def save_settings(self):
         notification = self.notification_var.get()
         dark_mode = self.dark_mode_var.get()
-        try:
-            calorie_budget = int(self.calorie_budget_entry.get())
-        except ValueError:
-            messagebox.showerror("Input Error", "Calorie Budget must be a number.")
-            return
+        while True:
+            try:
+                calorie_budget = int(self.calorie_budget_entry.get())
+                
+                if calorie_budget < 0:
+                    messagebox.showwarning("Input Warning", "Calorie Budget must be above 0.")
+                    self.calorie_budget_entry.focus_set()
+                    return
+                break
+            except ValueError:
+                messagebox.showerror("Input Error", "Calorie Budget must be a number.")
+                self.calorie_budget_entry.focus_set()
+                return
 
         db.connect()
         db.update("UserPreference", {"notification_enabled": notification, "DarkMode": dark_mode, "calorie_budget": calorie_budget}, {"user_id": self.user_id})
