@@ -20,7 +20,7 @@ class HistoryView(tk.Frame):
 
         self.display_history(history_frame)
 
-        clear_button = tk.Button(self, text="Hapus History", command=self.clear_history)
+        clear_button = tk.Button(self, text="Hapus History", command=self.clear_history, font=("Comic Sans MS", 10), bg='red', fg='white')
         clear_button.pack(pady=20)
 
     def display_history(self, history_frame):
@@ -38,7 +38,7 @@ class HistoryView(tk.Frame):
         for plan in eaten_plans:
             date_str, plan_name, total_calories = plan
             entry_text = f"{date_str} | {plan_name} | {total_calories} kcal"
-            entry_label = tk.Label(history_frame, text=entry_text, font=("Roboto", 14), bg=COLOR_BACKGROUND, fg=COLOR_TEXT)
+            entry_label = tk.Label(history_frame, text=entry_text, font=("Verdana", 14), bg='light yellow', fg='black')
             entry_label.pack(anchor='w', pady=5)
 
         conn.close()

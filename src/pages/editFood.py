@@ -15,50 +15,50 @@ class EditFoodView(tk.Frame):
         self.load_food_item()
 
     def create_widgets(self):
-        back_button = tk.Button(self, text="Back to Food View", command=lambda: self.controller.show_page("FoodView"))
+        back_button = tk.Button(self, text="Back to Food View", command=lambda: self.controller.show_page("FoodView"), font=("Comic Sans MS", 10, ), background="blue", foreground="black")
         back_button.pack(pady=10)
 
-        tk.Label(self, text="Food Name:").pack()
+        tk.Label(self, text="Food Name:", font=("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.name_entry = tk.Entry(self)
         self.name_entry.pack()
 
-        tk.Label(self, text="Calories:").pack()
+        tk.Label(self, text="Calories:", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.calories_entry = tk.Entry(self)
         self.calories_entry.pack()
 
-        tk.Label(self, text="Protein (g):").pack()
+        tk.Label(self, text="Protein (g):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.protein_entry = tk.Entry(self)
         self.protein_entry.pack()
 
-        tk.Label(self, text="Carbs (g):").pack()
+        tk.Label(self, text="Carbs (g):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.carbs_entry = tk.Entry(self)
         self.carbs_entry.pack()
 
-        tk.Label(self, text="Total Fat (g):").pack()
+        tk.Label(self, text="Total Fat (g):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.total_fat_entry = tk.Entry(self)
         self.total_fat_entry.pack()
 
-        tk.Label(self, text="Cholesterol (mg):").pack()
+        tk.Label(self, text="Cholesterol (mg):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.cholesterol_entry = tk.Entry(self)
         self.cholesterol_entry.pack()
 
-        tk.Label(self, text="Saturated Fat (g):").pack()
+        tk.Label(self, text="Saturated Fat (g):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.saturated_fat_entry = tk.Entry(self)
         self.saturated_fat_entry.pack()
 
-        tk.Label(self, text="Sodium (mg):").pack()
+        tk.Label(self, text="Sodium (mg):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.sodium_entry = tk.Entry(self)
         self.sodium_entry.pack()
 
-        tk.Label(self, text="Fiber (g):").pack()
+        tk.Label(self, text="Fiber (g):", font =("Verdana", 10, "bold"), background="light grey", foreground="black").pack()
         self.fiber_entry = tk.Entry(self)
         self.fiber_entry.pack()
 
-        tk.Label(self, text="Sugar (g):").pack()
+        tk.Label(self, text="Sugar (g):", font =("Verdana", 10, "bold"), background="light grey", foreground="black"). pack()
         self.sugar_entry = tk.Entry(self)
         self.sugar_entry.pack()
 
-        save_button = tk.Button(self, text="Save Changes", command=self.save_food_item)
+        save_button = tk.Button(self, text="Save Changes", command=self.save_food_item, font=("Comic Sans MS", 10), background="light green", foreground="black")
         save_button.pack(pady=20)
 
     def load_food_item(self):
