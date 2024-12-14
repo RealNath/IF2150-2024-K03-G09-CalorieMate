@@ -94,7 +94,7 @@ def configure_styles():
                     foreground=CURR_COLOR_TEXT,
                     background=CURR_COLOR_SECONDARY,
                     relief="flat",
-                    font=("Arial", 12, "bold"),
+                    font=("Roboto", 12, "bold"),
                     padding=10)
     style.map('NavMain.TButton',
               background=[('active', CURR_COLOR_ACCENT)],
@@ -105,12 +105,12 @@ def configure_styles():
     style.configure('SidebarRight.TLabel',
                     background=CURR_COLOR_PRIMARY,
                     foreground=CURR_COLOR_TEXT,
-                    font=("Arial", 14, "bold"))
+                    font=("Roboto", 14, "bold"))
     style.configure('SidebarRight.TButton',
                     foreground=CURR_COLOR_TEXT,
                     background=CURR_COLOR_SECONDARY,
                     relief="flat",
-                    font=("Arial", 12, "bold"),
+                    font=("Roboto", 12, "bold"),
                     padding=10)
     style.map('SidebarRight.TButton',
               background=[('active', CURR_COLOR_ACCENT)],
@@ -121,23 +121,23 @@ def configure_styles():
     style.configure('MainContent.TLabel',
                     background=CURR_COLOR_BACKGROUND,
                     foreground=CURR_COLOR_PRIMARY,
-                    font=("Arial", 16, "bold"))
+                    font=("Roboto", 16, "bold"))
     style.configure('Header.TFrame', background=CURR_COLOR_BACKGROUND)
     style.configure('Header.TLabel',
                     background=CURR_COLOR_BACKGROUND,
                     foreground=CURR_COLOR_PRIMARY,
-                    font=("Arial", 16, "bold"))
+                    font=("Roboto", 16, "bold"))
     style.configure('Badge.TLabel',
                     background="#e74c3c",
                     foreground=CURR_COLOR_TEXT,
-                    font=("Arial", 8, "bold"))
+                    font=("Roboto", 8, "bold"))
 
     # User Info Styles
     style.configure('UserInfo.TFrame', background=CURR_COLOR_PRIMARY)
     style.configure('UserInfo.TLabel',
                     background=CURR_COLOR_PRIMARY,
                     foreground=CURR_COLOR_TEXT,
-                    font=("Arial", 12, "bold"))
+                    font=("Roboto", 12, "bold"))
 
     # Separators
     style.configure('VerticalSeparator.TSeparator', orient='vertical')
